@@ -30,23 +30,25 @@ public class Crawler {
     public static void main(String args[]) {
         Crawler crawler = new Crawler();
         try {
-            String s = "#hadoop";
-            crawler.searchtweets(s);
+            String s = "bounding_box:[40.7 79.9 40.8 80]";
+            crawler.searchTweets(s);
             crawler.exportToFile();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void searchtweets(String s) {
+    public void searchTweets(String s) {
         try {
-            Query query = new Query(s);
-            query.setCount(100);
+            double lat = 59.4372155;
+            double lon = 24.7453688;
+            double res = 5;
+            String resUnit = "mi";
+            Query query = new Query().geoCode(new GeoLocation(lat, lon), res, resUnit);
+            query.setCount(500);
             QueryResult result = twitter.search(query);
             for (Status status : result.getTweets()) {
-                String tweet = "@" + status.getUser().getScreenName() + ":" + status.getText();
-                tweets.add(tweet);
-                System.out.println(tweet);
+                System.out.println(status.getText());
             }
         } catch (Exception e) {
             e.printStackTrace();
