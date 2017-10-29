@@ -1,6 +1,8 @@
 import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
 
+import java.io.FileWriter;
+
 
 /**
  * Author: Spikerman < mail4spikerman@gmail.com >
@@ -8,10 +10,16 @@ import twitter4j.conf.ConfigurationBuilder;
  */
 public class StreamCrawler {
     int count = 0;
+    FileWriter file;
     private TwitterStream twitterStream;
-    private StatusListener listener;
+    private String fileName = "tweets.txt";
 
     public StreamCrawler() {
+        try {
+            file = new FileWriter(fileName);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         ConfigurationBuilder cb = new ConfigurationBuilder();
         cb.setDebugEnabled(true)
                 .setOAuthConsumerKey("W1wlfbPOIsHWM7HAZijxYNPW6")
@@ -20,13 +28,13 @@ public class StreamCrawler {
                 .setOAuthAccessTokenSecret("caB9Kwmx2p04cJIGflXLMpmOzHb1IkqCDLtUkq2e8s11V");
         twitterStream = new TwitterStreamFactory(cb.build()).getInstance();
         System.out.println("connect");
-
-        listener = new StatusListener() {
+        StatusListener listener = new StatusListener() {
             @Override
             public void onStatus(Status status) {
-                //here you do whatever you want with the tweet
-                System.out.println(count + " " + status.getGeoLocation());
-                count++;
+                if (status.getGeoLocation() != null) {
+                    count++;
+                    handleState(status);
+                }
             }
 
             @Override
@@ -59,7 +67,6 @@ public class StreamCrawler {
 
         };
         twitterStream.addListener(listener);
-
     }
 
     public static void main(String args[]) {
@@ -67,10 +74,42 @@ public class StreamCrawler {
         streamCrawler.start();
     }
 
-    public void start() {
+    private void handleState(Status status) {
+        TweetInfo tweet = new TweetInfo();
+        StringBuilder sb = new StringBuilder();
+        sb.append("$");
+        tweet.id = status.getId();
+        sb.append(tweet.id).append(" | ");
+        tweet.latitude = status.getGeoLocation().getLatitude();
+        sb.append(tweet.latitude).append(" | ");
+
+        tweet.longitude = status.getGeoLocation().getLongitude();
+        sb.append(tweet.longitude).append(" | ");
+
+        tweet.createdDate = status.getCreatedAt();
+        sb.append(tweet.createdDate.toString()).append(" | ");
+
+        tweet.text = status.getText();
+        sb.append(tweet.text);
+
+        exportToFile(sb.toString());
+
+        System.out.println(tweet.id + " " + tweet.latitude + " " + tweet.longitude + " " + tweet.createdDate + " " + tweet.text);
+
+    }
+
+    private void start() {
         FilterQuery filterQuery = new FilterQuery();
         double[][] locations = {{-74, 40}, {-73, 41}}; //those are the boundary from New York City
         filterQuery.locations(locations);
         twitterStream.filter(filterQuery);
+    }
+
+    private void exportToFile(String s) {
+        try {
+            file.write(s);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
