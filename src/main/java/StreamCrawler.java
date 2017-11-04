@@ -9,7 +9,7 @@ import java.io.FileWriter;
  * Created Date: 10/28/17
  */
 public class StreamCrawler {
-    int count = 0;
+    final static Logger logger = Logger.getLogger(StreamCrawler.class);
     FileWriter file;
     private TwitterStream twitterStream;
     private String fileName = "tweets.txt";
@@ -27,19 +27,18 @@ public class StreamCrawler {
                 .setOAuthAccessToken("3232249921-Czg0p4c5ca14t7UdkIZfEy6mOtQOkmN7tZnNZmU")
                 .setOAuthAccessTokenSecret("caB9Kwmx2p04cJIGflXLMpmOzHb1IkqCDLtUkq2e8s11V");
         twitterStream = new TwitterStreamFactory(cb.build()).getInstance();
-        System.out.println("connect");
         StatusListener listener = new StatusListener() {
             @Override
             public void onStatus(Status status) {
                 if (status.getGeoLocation() != null) {
-                    count++;
                     handleState(status);
                 }
             }
 
             @Override
             public void onException(Exception ex) {
-                ex.printStackTrace();
+                logger.info("network error");
+                System.exit(-1);
             }
 
             @Override
@@ -74,27 +73,30 @@ public class StreamCrawler {
         streamCrawler.start();
     }
 
+    //construct tweet object from respond content
     private void handleState(Status status) {
         TweetInfo tweet = new TweetInfo();
         StringBuilder sb = new StringBuilder();
-        sb.append("$");
         tweet.id = status.getId();
-        sb.append(tweet.id).append(" | ");
+        sb.append(tweet.id).append("\t");
         tweet.latitude = status.getGeoLocation().getLatitude();
-        sb.append(tweet.latitude).append(" | ");
+        sb.append(tweet.latitude).append("\t");
 
         tweet.longitude = status.getGeoLocation().getLongitude();
-        sb.append(tweet.longitude).append(" | ");
+        sb.append(tweet.longitude).append("\t");
 
         tweet.createdDate = status.getCreatedAt();
-        sb.append(tweet.createdDate.toString()).append(" | ");
+        sb.append(tweet.createdDate.toString()).append("\t");
 
-        tweet.text = status.getText();
-        sb.append(tweet.text);
+        tweet.text = status.getText().replace("\n", "").replace("\r", "");
+        sb.append(tweet.text).append("\t");
 
+        tweet.userId = status.getUser().getId();
+        sb.append(tweet.userId).append("\n");
         exportToFile(sb.toString());
 
-        System.out.println(tweet.id + " " + tweet.latitude + " " + tweet.longitude + " " + tweet.createdDate + " " + tweet.text);
+
+        //System.out.println(tweet.id + " " + tweet.latitude + " " + tweet.longitude + " " + tweet.createdDate + " " + tweet.text);
 
     }
 
@@ -108,6 +110,7 @@ public class StreamCrawler {
     private void exportToFile(String s) {
         try {
             file.write(s);
+            file.flush();// make sure buffered data is written into the disk
         } catch (Exception e) {
             e.printStackTrace();
         }
