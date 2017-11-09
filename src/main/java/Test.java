@@ -1,6 +1,9 @@
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Author: Spikerman
@@ -17,14 +20,19 @@ public class Test {
             File file = new File("tweets.txt");
             FileReader fileReader = new FileReader(file);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
-            //StringBuffer stringBuffer = new StringBuffer();
             String line;
             int count = 0;
 
             while ((line = bufferedReader.readLine()) != null) {
                 String[] arr = line.split("\\t");
-                System.out.println(count + ":  " + line);
-
+                String id = arr[0];
+                String latitude = arr[1];
+                String longitude = arr[2];
+                String createdDateString = arr[3];
+                DateFormat dateFormat = new SimpleDateFormat("EEE MMM dd hh:mm:ss zzz yyyy");
+                Date createdDate = dateFormat.parse(createdDateString);
+                String text = arr[4];
+                String userId = arr[5];
                 count++;
             }
             fileReader.close();
