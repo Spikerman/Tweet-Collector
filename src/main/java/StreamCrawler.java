@@ -24,6 +24,7 @@ public class StreamCrawler {
         workerId++;
         boolean isFirst = (workerId & 1) == 0;
         logger.info("======= worker " + (workerId & 1) + " start work =======");
+
         try {
             file = new FileWriter(fileName, true);
         } catch (Exception e) {
