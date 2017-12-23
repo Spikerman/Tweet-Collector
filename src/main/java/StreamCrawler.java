@@ -33,17 +33,17 @@ public class StreamCrawler {
         cb = new ConfigurationBuilder();
         if (isFirst) {
             cb.setDebugEnabled(true)
-                    .setOAuthConsumerKey("aecbpbv7UX9kZf8k5klwsbGgY")
-                    .setOAuthConsumerSecret("7PKfvEH8y81VITIxkpPbPFoJJLZEB97DJqC7nZBFqYLgY8ZUfQ")
-                    .setOAuthAccessToken("914934419835715586-htd8tXW3gsJvZJDwSTFUXHlO48hORrN")
-                    .setOAuthAccessTokenSecret("0tMWimLrLfCrLJx1K8wELgc4LDUyZGt9Zvx8fO1SHfTpY");
+                    .setOAuthConsumerKey("")
+                    .setOAuthConsumerSecret("")
+                    .setOAuthAccessToken("")
+                    .setOAuthAccessTokenSecret("");
 
         } else {
             cb.setDebugEnabled(true)
-                    .setOAuthConsumerKey("W1wlfbPOIsHWM7HAZijxYNPW6")
-                    .setOAuthConsumerSecret("K2sEP5PLAHdkupiXCLdV8cjbwOoPAyDGMe0kLQ27OnhHoM8pJ8")
-                    .setOAuthAccessToken("3232249921-Czg0p4c5ca14t7UdkIZfEy6mOtQOkmN7tZnNZmU")
-                    .setOAuthAccessTokenSecret("caB9Kwmx2p04cJIGflXLMpmOzHb1IkqCDLtUkq2e8s11V");
+                    .setOAuthConsumerKey("")
+                    .setOAuthConsumerSecret("")
+                    .setOAuthAccessToken("")
+                    .setOAuthAccessTokenSecret("");
         }
 
     }
